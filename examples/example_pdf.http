@@ -1,0 +1,50 @@
+### Health Check
+GET http://localhost:8080/health
+
+### HTML Conversion (New Format)
+POST http://localhost:8080/api/v1/convert
+Content-Type: application/json
+
+{
+  "type": "html",
+  "content": "<h1>AI Research Paper</h1><p>This paper discusses <strong>Large Language Models</strong> and their applications in <em>natural language processing</em>.</p><ul><li>Transformer architecture</li><li>Attention mechanisms</li><li>Fine-tuning strategies</li></ul>"
+}
+
+### HTML Conversion (Legacy Format - Backward Compatible)
+POST http://localhost:8080/api/v1/convert
+Content-Type: application/json
+
+{
+  "html": "<h1>Legacy Format</h1><p>This still works for backward compatibility.</p>"
+}
+
+### PDF Conversion (Base64 Encoded)
+POST http://localhost:8080/api/v1/convert
+Content-Type: application/json
+
+{
+  "type": "pdf",
+  "content": "JVBERi0xLjMKJcTl8uXrp/Og0MTGCjQgMCBvYmoKPDwKL0xlbmd0aCA0MSAK..."
+}
+
+### PDF Conversion with Custom Options
+POST http://localhost:8080/api/v1/convert
+Content-Type: application/json
+
+{
+  "type": "pdf",
+  "content": "JVBERi0xLjMKJcTl8uXrp/Og0MTGCjQgMCBvYmoKPDwKL0xlbmd0aCA0MSAK...",
+  "options": {
+    "heading_style": "setext",
+    "bullet_list_marker": "*"
+  }
+}
+
+### Test with Complex HTML Document
+POST http://localhost:8080/api/v1/convert
+Content-Type: application/json
+
+{
+  "type": "html",
+  "content": "<!DOCTYPE html><html><head><title>Research Paper</title></head><body><article><h1>Introduction to Neural Networks</h1><p>Neural networks are computing systems inspired by biological neural networks.</p><h2>Key Components</h2><ol><li>Input layer</li><li>Hidden layers</li><li>Output layer</li></ol><h3>Activation Functions</h3><p>Common activation functions include:</p><ul><li><code>ReLU</code>: Rectified Linear Unit</li><li><code>Sigmoid</code>: S-shaped curve</li><li><code>Tanh</code>: Hyperbolic tangent</li></ul><table><caption>Comparison of Activation Functions</caption><thead><tr><th>Function</th><th>Range</th><th>Use Case</th></tr></thead><tbody><tr><td>ReLU</td><td>[0, ∞)</td><td>Hidden layers</td></tr><tr><td>Sigmoid</td><td>(0, 1)</td><td>Binary classification</td></tr></tbody></table><details><summary>Advanced Topics</summary><p>Deep learning architectures include CNNs, RNNs, and Transformers.</p></details></article></body></html>"
+}

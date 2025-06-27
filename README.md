@@ -1,18 +1,18 @@
 # Any2MD - Universal to Markdown Converter API
 
-A high-performance REST API service that converts various formats to Markdown, optimized for LLM readability. Currently supports HTML to Markdown conversion with more formats planned. Built with Go using Clean Architecture principles.
+A high-performance REST API service that converts various formats to Markdown, optimized for LLM readability. Currently supports HTML and PDF to Markdown conversion. Built with Go using Clean Architecture principles.
 
 ## Features
 
 - **Clean Architecture**: Maintainable and testable code structure
 - **High Performance**: Built with Go for efficient processing
 - **LLM-Optimized**: Special handling for semantic HTML elements to preserve meaning
-- **Comprehensive HTML Support**: 
-  - Standard HTML elements (headings, paragraphs, lists, tables)
-  - HTML5 semantic tags (nav, article, section, aside, etc.)
-  - Special formatting (mark, del, ins, sub, sup, kbd)
-  - Media elements (img, video, audio, iframe)
-  - Advanced elements (details/summary, figure/figcaption, dl/dt/dd)
+- **Multi-Format Support**: 
+  - **HTML**: Standard elements, HTML5 semantic tags, special formatting, media elements
+  - **PDF**: Text extraction, heading detection, list recognition, metadata preservation
+- **Format-Specific Features**:
+  - HTML: Semantic tag handling, media element conversion, interactive elements
+  - PDF: Intelligent heading detection, list item recognition, table extraction
 - **Customizable Output**: Configure heading styles, list markers, code block styles, etc.
 - **Error Handling**: Detailed error responses with appropriate HTTP status codes
 - **Rate Limiting**: Built-in rate limiting to prevent abuse
@@ -54,10 +54,11 @@ make docker-run
 
 **Endpoint**: `POST /api/v1/convert`
 
-**Request Body**:
+**Request Body** (HTML):
 ```json
 {
-  "html": "<h1>Hello World</h1><p>This is a paragraph.</p>",
+  "type": "html",
+  "content": "<h1>Hello World</h1><p>This is a paragraph.</p>",
   "options": {
     "heading_style": "atx",
     "bullet_list_marker": "-",
@@ -70,11 +71,31 @@ make docker-run
 }
 ```
 
+**Request Body** (PDF):
+```json
+{
+  "type": "pdf",
+  "content": "base64-encoded-pdf-content",
+  "options": {
+    "heading_style": "atx",
+    "bullet_list_marker": "-"
+  }
+}
+```
+
+**Legacy HTML Request** (still supported):
+```json
+{
+  "html": "<h1>Hello World</h1><p>This is a paragraph.</p>"
+}
+```
+
 **Response**:
 ```json
 {
   "markdown": "# Hello World\n\nThis is a paragraph.",
   "timestamp": "2024-01-15T10:30:00Z",
+  "type": "html",
   "stats": {
     "input_length": 45,
     "output_length": 35,

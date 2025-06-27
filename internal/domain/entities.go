@@ -1,12 +1,39 @@
 package domain
 
 import (
+	"encoding/base64"
 	"time"
 )
 
 type ConversionRequest struct {
-	HTML    string            `json:"html" binding:"required"`
-	Options ConversionOptions `json:"options,omitempty"`
+	Type     string            `json:"type"`
+	Content  string            `json:"content"`
+	Options  ConversionOptions `json:"options,omitempty"`
+	// Deprecated: use Content instead
+	HTML     string            `json:"html,omitempty"`
+}
+
+// GetContent returns the content based on request type
+func (r *ConversionRequest) GetContent() string {
+	if r.Content != "" {
+		return r.Content
+	}
+	// Backward compatibility
+	if r.HTML != "" {
+		r.Type = "html"
+		return r.HTML
+	}
+	return ""
+}
+
+// GetContentAsBytes returns content as bytes, handling base64 for binary formats
+func (r *ConversionRequest) GetContentAsBytes() ([]byte, error) {
+	content := r.GetContent()
+	if r.Type == "pdf" {
+		// PDF content should be base64 encoded
+		return base64.StdEncoding.DecodeString(content)
+	}
+	return []byte(content), nil
 }
 
 type ConversionOptions struct {
@@ -25,6 +52,7 @@ type ConversionResponse struct {
 	Markdown  string    `json:"markdown"`
 	Timestamp time.Time `json:"timestamp"`
 	Stats     Stats     `json:"stats"`
+	Type      string    `json:"type"`
 }
 
 type Stats struct {

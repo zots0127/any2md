@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -22,13 +25,51 @@ func NewHTTPHandler(converterUseCase *usecases.ConverterUseCase) *HTTPHandler {
 func (h *HTTPHandler) Convert(c *gin.Context) {
 	var request domain.ConversionRequest
 	
-	if err := c.ShouldBindJSON(&request); err != nil {
-		h.handleError(c, errors.NewValidationError("Invalid request body: " + err.Error()))
+	// Read raw body
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		h.handleError(c, errors.NewValidationError("Failed to read request body"))
 		return
 	}
 	
-	if len(request.HTML) > 10*1024*1024 {
-		h.handleError(c, errors.NewValidationError("HTML content exceeds maximum size of 10MB"))
+	// Parse JSON manually
+	if err := json.Unmarshal(body, &request); err != nil {
+		h.handleError(c, errors.NewValidationError("Invalid JSON: " + err.Error()))
+		return
+	}
+	
+	// Set default type for backward compatibility
+	if request.Type == "" && request.HTML != "" {
+		request.Type = "html"
+	}
+	
+	// Manual validation for required fields
+	if request.Type == "" {
+		h.handleError(c, errors.NewValidationError("type field is required (html or pdf)"))
+		return
+	}
+	
+	// Validate type
+	if request.Type != "html" && request.Type != "pdf" {
+		h.handleError(c, errors.NewValidationError("type must be 'html' or 'pdf'"))
+		return
+	}
+	
+	// Get content for validation
+	content := request.GetContent()
+	if content == "" {
+		h.handleError(c, errors.NewValidationError("content cannot be empty"))
+		return
+	}
+	
+	// Size limits based on type
+	maxSize := 10 * 1024 * 1024 // 10MB default
+	if request.Type == "pdf" {
+		maxSize = 50 * 1024 * 1024 // 50MB for PDFs
+	}
+	
+	if len(content) > maxSize {
+		h.handleError(c, errors.NewValidationError(fmt.Sprintf("%s content exceeds maximum size of %dMB", request.Type, maxSize/(1024*1024))))
 		return
 	}
 	
