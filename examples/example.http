@@ -1,0 +1,55 @@
+### Health Check
+GET http://localhost:8080/health
+
+### Basic HTML Conversion
+POST http://localhost:8080/api/v1/convert
+Content-Type: application/json
+
+{
+  "html": "<h1>Welcome to AI Era</h1><p>This is a <strong>simple</strong> HTML to Markdown conversion example with <em>emphasis</em> and a <a href='https://example.com'>link</a>.</p>"
+}
+
+### Complex HTML with Lists and Code
+POST http://localhost:8080/api/v1/convert
+Content-Type: application/json
+
+{
+  "html": "<article><h1>Understanding LLMs</h1><h2>Key Features</h2><ul><li>Natural language processing</li><li>Context awareness</li><li>Text generation</li></ul><h2>Code Example</h2><pre><code class='language-python'>def process_text(text):\n    return llm.generate(text)</code></pre></article>"
+}
+
+### HTML with Table
+POST http://localhost:8080/api/v1/convert
+Content-Type: application/json
+
+{
+  "html": "<table><thead><tr><th>Model</th><th>Parameters</th><th>Release</th></tr></thead><tbody><tr><td>GPT-4</td><td>1.7T</td><td>2023</td></tr><tr><td>Claude</td><td>Unknown</td><td>2023</td></tr></tbody></table>"
+}
+
+### HTML with Custom Options
+POST http://localhost:8080/api/v1/convert
+Content-Type: application/json
+
+{
+  "html": "<h1>Title</h1><ul><li>First item</li><li>Second item</li></ul>",
+  "options": {
+    "heading_style": "setext",
+    "bullet_list_marker": "*",
+    "strong_delimiter": "__"
+  }
+}
+
+### HTML with Special Elements
+POST http://localhost:8080/api/v1/convert
+Content-Type: application/json
+
+{
+  "html": "<p>This text has <mark>highlighted</mark> content, <del>deleted text</del>, and <ins>inserted text</ins>. Also includes <sub>subscript</sub> and <sup>superscript</sup>.</p><details><summary>Click to expand</summary><p>Hidden content here!</p></details>"
+}
+
+### Full Document Example
+POST http://localhost:8080/api/v1/convert
+Content-Type: application/json
+
+{
+  "html": "<!DOCTYPE html><html><head><title>AI Document</title></head><body><nav><a href='#intro'>Introduction</a> | <a href='#features'>Features</a></nav><article><h1 id='intro'>Artificial Intelligence in 2024</h1><p>AI has transformed how we work with <abbr title='Large Language Models'>LLMs</abbr>.</p><section id='features'><h2>Key Features</h2><ol><li>Understanding context</li><li>Generating content</li><li>Code assistance</li></ol><figure><img src='ai-diagram.png' alt='AI Architecture'><figcaption>Figure 1: Modern AI Architecture</figcaption></figure></section></article><footer><p>&copy; 2024 AI Research Institute</p></footer></body></html>"
+}
